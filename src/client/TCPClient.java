@@ -17,50 +17,46 @@ import java.util.logging.Logger;
  * @author a11216367
  */
 public class TCPClient {
-    
+
     String username;
     MulticastConnection multicast;
     DataOutputStream out;
     Socket s;
+    
+    String host = "localhost";
+    int serverPort = 7896;
 
-    public TCPClient(ChatWindow chat) {
-        if(login()){
+    public TCPClient(ChatWindow chat, String username) {
+        this.username = username;
 
-            //Se une al grupo multicast para poder recibir los mensajes de otros clientes.
-            multicast = new MulticastConnection(chat);
+        //Se une al grupo multicast para poder recibir los mensajes de otros clientes.
+        multicast = new MulticastConnection(chat);
+
+        try {
             
-            try {
-                String host = "localhost";
-                int serverPort = 7896;
-                //Crea el socket para conectarse con el server.
-                s = new Socket(host, serverPort);
-                //Crea el stream para mandar mensajes.
-                out = new DataOutputStream(s.getOutputStream());
+            //Crea el socket para conectarse con el server.
+            s = new Socket(host, serverPort);
+            //Crea el stream para mandar mensajes.
+            out = new DataOutputStream(s.getOutputStream());
 
-            } catch (UnknownHostException e) {
-                System.out.println("Sock:" + e.getMessage());
-            } catch (EOFException e) {
-                System.out.println("EOF:" + e.getMessage());
-            } catch (IOException e) {
-                System.out.println("IO:" + e.getMessage());
-            }
+        } catch (UnknownHostException e) {
+            System.out.println("Sock:" + e.getMessage());
+        } catch (EOFException e) {
+            System.out.println("EOF:" + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO:" + e.getMessage());
         }
-    }
-    
-    boolean login() {
 
-        return true;
     }
-    
-    void sendMessage(String msg){
+
+    void sendMessage(String msg) {
         try {
             //Limpia el stream.
             out.flush();
             //Envia un mensaje al server.
-            out.writeUTF(msg+"\n");
+            out.writeUTF(msg + "\n");
         } catch (IOException ex) {
             Logger.getLogger(TCPClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 }

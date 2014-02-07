@@ -13,9 +13,9 @@ public class ChatWindow extends javax.swing.JFrame{
     /**
      * Creates new form ChatWindow
      */
-    public ChatWindow() {
+    public ChatWindow(String user) {
         initComponents();
-        client = new TCPClient(this);
+        client = new TCPClient(this,user);
     }
 
     /**
@@ -33,6 +33,7 @@ public class ChatWindow extends javax.swing.JFrame{
         txtChat = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Chat");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -46,8 +47,16 @@ public class ChatWindow extends javax.swing.JFrame{
             }
         });
 
+        txtMsg.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtMsgKeyPressed(evt);
+            }
+        });
+
         txtChat.setColumns(20);
+        txtChat.setEditable(false);
         txtChat.setRows(5);
+        txtChat.setFocusable(false);
         jScrollPane1.setViewportView(txtChat);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -81,54 +90,23 @@ public class ChatWindow extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
-        client.sendMessage(txtMsg.getText());
+        // se envía el mensaje al servidor.
+        client.sendMessage(client.username+": "+txtMsg.getText());
+        
+        txtMsg.setText(null);
     }//GEN-LAST:event_btnSendActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
 
     }//GEN-LAST:event_formWindowClosed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ChatWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ChatWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ChatWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChatWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void txtMsgKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMsgKeyPressed
+        //Presiona el boton enviar al presionar la tecla 'enter'.
+        if(evt.getKeyCode()==10){
+            btnSend.doClick();
         }
-        //</editor-fold>
+    }//GEN-LAST:event_txtMsgKeyPressed
 
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new ChatWindow().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSend;
     private javax.swing.JScrollPane jScrollPane1;
@@ -137,6 +115,7 @@ public class ChatWindow extends javax.swing.JFrame{
     // End of variables declaration//GEN-END:variables
 
     public void update(String msg) {
+        //Actualiza el chat con los nuevos mensajes.
         txtChat.setText(txtChat.getText().trim()+'\n'+msg);
     }
 }
