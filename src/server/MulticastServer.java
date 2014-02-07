@@ -17,55 +17,73 @@ import java.util.logging.Logger;
  * @author José Ramón Díaz
  */
 public class MulticastServer {
-    private MulticastSocket s =null;
+
+    private MulticastSocket s = null;
     private String grp = "228.5.6.7";
     private InetAddress group;
     private int port = 6789;
     private static MulticastServer multicastServer;
-    
-    private MulticastServer(){
-        
-   	 try {               
-	    	s = new MulticastSocket(port);
-                group = InetAddress.getByName(grp);
-	   	s.joinGroup(group);	
- 	    }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
-	   }catch (IOException e){System.out.println("IO: " + e.getMessage());}
-    }
-    
-    static MulticastServer getInstance(){
-        if(multicastServer==null){
-            multicastServer = new MulticastServer();
-            return multicastServer;
-        }else {
-            return multicastServer;
+
+    private MulticastServer() {
+
+        try {
+            //Se crea el socket multicast con el puerto indicado
+            s = new MulticastSocket(port);
+            //Se obtiene la direccion por el nombre
+            group = InetAddress.getByName(grp);
+            //El socket multicast se une al grupo
+            s.joinGroup(group);
+        } catch (SocketException e) {
+            System.out.println("Socket: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO: " + e.getMessage());
         }
     }
     
-    public void sendMulticast(String message){
-        byte [] m = message.getBytes();
-	    	DatagramPacket messageOut=null;
-                
+    //Obtiene la instancia del MulticastServer
+    static MulticastServer getInstance() {
+        //Si es la primera vez que se solicita se crea uno nuevo
+        //Para seguir el patron singleton
+        if (multicastServer == null) {
+            multicastServer = new MulticastServer();
+            return multicastServer;
+        } else {
+            return multicastServer;
+        }
+    }
+
+    //Recibe el mensaje y lo envía al grupo
+    public void sendMulticast(String message) {
+        //Obtiene los bytes del mensaje
+        byte[] m = message.getBytes();
+        DatagramPacket messageOut = null;
+
         try {
+            //Crea el datagrama
             messageOut = new DatagramPacket(m, m.length, group, port);
+            //Envía el mensaje
             s.send(messageOut);
         } catch (SocketException ex) {
             Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
-        }catch (IOException e){System.out.println("IO: " + e.getMessage());}
-	    		
+        } catch (IOException e) {
+            System.out.println("IO: " + e.getMessage());
+        }
+
     }
-    
-    public void close(){
+
+    //Abandona el grupo
+    public void close() {
         try {
             s.leaveGroup(group);
         } catch (IOException ex) {
             Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    void readMessages(){
+
+    //Este metodo solo es para pruebas
+    void readMessages() {
         byte[] buffer = new byte[1000];
- 	   	for(;;) {
+        for (;;) {
             try {
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
                 s.receive(messageIn);
@@ -73,6 +91,6 @@ public class MulticastServer {
             } catch (IOException ex) {
                 Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
             }
-  	     	}
+        }
     }
 }
