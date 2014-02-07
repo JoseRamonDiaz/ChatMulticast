@@ -1,6 +1,7 @@
 
 # Package Files #
 *.jar
+!src/libs/mysql-connector-java-5.1.27-bin.jar
 *.war
 *.ear
 
