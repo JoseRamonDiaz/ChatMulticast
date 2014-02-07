@@ -29,10 +29,13 @@ public class AccessRequester {
         String serverAddress = "localhost";
         int port = 7897;
         try {
+            //Se solicita conexion al servidor de peticiones de acceso
             Socket socket = new Socket(serverAddress,port);
             out = new PrintWriter(socket.getOutputStream(),true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //Se envían los datos de usuario
             out.println(user+":"+pass);
+            //Si el servidor envia true se retorna cierto de lo contrario falso
             if("true".equals(in.readLine())){
                 return true;
             }else{

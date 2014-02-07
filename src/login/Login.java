@@ -121,14 +121,17 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String user,pass;
+        //Obtiene usuario y contraseña de la ventana
         user = txtUser.getText();
         pass = txtPass.getText();
+        //Si se permite el acceso se muestran las ventans de chat
         if(AccessRequester.isAccesAllowed(user,pass)){
-            JOptionPane.showMessageDialog(this,"Bienvenido "+"user");
+            JOptionPane.showMessageDialog(this,"Bienvenido "+user);
             //llama a la ventana de chat cliente
             new ChatWindow().setVisible(true);
             this.dispose();
-        }
+        }else
+            JOptionPane.showMessageDialog(this,"Acceso no permitido");
             
     }//GEN-LAST:event_jButton1ActionPerformed
 
